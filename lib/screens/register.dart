@@ -20,7 +20,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Map<String, String> _formValues = {
     'email': '',
-    'password': 'password',
+    'password': '',
   };
 
   void _showErrorDialog(

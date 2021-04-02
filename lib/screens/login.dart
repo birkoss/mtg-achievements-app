@@ -19,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Map<String, String> _formValues = {
     'email': '',
-    'password': 'password',
+    'password': '',
   };
 
   void _showErrorDialog(errorMessage) {

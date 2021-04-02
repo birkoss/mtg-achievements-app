@@ -15,7 +15,6 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print("MyApp.build");
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -26,7 +25,8 @@ class MyApp extends StatelessWidget {
         builder: (context, user, _) => MaterialApp(
           title: 'MTG Achievements',
           theme: ThemeData(
-            primarySwatch: Colors.blue,
+            primarySwatch: Colors.green,
+            accentColor: Colors.red,
             textTheme: TextTheme(
               headline1: TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold),
               bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
@@ -37,11 +37,9 @@ class MyApp extends StatelessWidget {
               : FutureBuilder(
                   future: user.tryAutoLogin(),
                   builder: (ctx, snapshot) {
-                    print("FutureBuilder.builder...");
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return SplashScreen();
                     } else {
-                      print("icitte?");
                       return LoginScreen();
                     }
                   }),

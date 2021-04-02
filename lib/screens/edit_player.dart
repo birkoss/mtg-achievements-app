@@ -13,12 +13,43 @@ class EditPlayer extends StatefulWidget {
 }
 
 class _EditPlayerState extends State<EditPlayer> {
+  String _playerId = null;
+
   GlobalKey<FormState> _formKey = GlobalKey();
 
   Map<String, String> _formValues = {
     'email': '',
     'role': 'player',
   };
+
+  bool _isLoaded = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_isLoaded) {
+      return;
+    }
+
+    String newPlayerId = ModalRoute.of(context).settings.arguments as String;
+    if (newPlayerId != null) {
+      setState(() {
+        _playerId = newPlayerId;
+
+        Provider.of<PlaygroupProvider>(context, listen: false)
+            .players
+            .forEach((player) {
+          if (player.id == _playerId) {
+            _formValues['email'] = player.email;
+            _formValues['role'] = player.role;
+          }
+        });
+      });
+    }
+
+    _isLoaded = true;
+  }
 
   void _showErrorDialog(
       [String errorMessage = 'Something went wrong. Please try again.']) {
@@ -44,10 +75,17 @@ class _EditPlayerState extends State<EditPlayer> {
       _formKey.currentState.save();
 
       try {
-        await Provider.of<PlaygroupProvider>(
-          context,
-          listen: false,
-        ).addPlayer(_formValues['email'], _formValues['role']);
+        if (_playerId == null) {
+          await Provider.of<PlaygroupProvider>(
+            context,
+            listen: false,
+          ).addPlayer(_formValues['email'], _formValues['role']);
+        } else {
+          await Provider.of<PlaygroupProvider>(
+            context,
+            listen: false,
+          ).updatePlayer(_playerId, _formValues['role']);
+        }
 
         Navigator.of(context).pop();
       } on HttpException catch (error) {
@@ -72,6 +110,9 @@ class _EditPlayerState extends State<EditPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    print("playerId:");
+    print(_playerId);
+    print(_formValues);
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Player'),
@@ -93,6 +134,7 @@ class _EditPlayerState extends State<EditPlayer> {
                 style: Theme.of(context).textTheme.headline6,
               ),
               TextFormField(
+                enabled: (_playerId == null),
                 initialValue: _formValues['email'],
                 decoration: InputDecoration(labelText: 'Email'),
                 textInputAction: TextInputAction.next,

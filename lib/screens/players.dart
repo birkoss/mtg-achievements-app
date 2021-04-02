@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../screens/edit_player.dart';
+
 import '../widgets/loading.dart';
 
 import '../providers/playgroup.dart';
@@ -31,7 +33,12 @@ class PlayersScreen extends StatelessWidget {
                       IconButton(
                         icon: Icon(Icons.edit),
                         color: Theme.of(context).primaryColor,
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                            EditPlayer.routeName,
+                            arguments: playgroup.players[index].id,
+                          );
+                        },
                       ),
                       IconButton(
                         icon: Icon(Icons.delete),
@@ -56,8 +63,8 @@ class PlayersScreen extends StatelessWidget {
                                     Provider.of<PlaygroupProvider>(
                                       context,
                                       listen: false,
-                                    ).removePlayer(
-                                      playgroup.players[index].email,
+                                    ).deletePlayer(
+                                      playgroup.players[index].id,
                                     );
                                   },
                                   child: Text(

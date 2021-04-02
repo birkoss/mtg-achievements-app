@@ -36,7 +36,41 @@ class PlayersScreen extends StatelessWidget {
                       IconButton(
                         icon: Icon(Icons.delete),
                         color: Theme.of(context).errorColor,
-                        onPressed: () {},
+                        onPressed: () {
+                          return showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: Text('Are you sure?'),
+                              content: Text(
+                                  'Do you want to remove this player from your playgroup?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(false);
+                                  },
+                                  child: Text('No'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(true);
+                                    Provider.of<PlaygroupProvider>(
+                                      context,
+                                      listen: false,
+                                    ).removePlayer(
+                                      playgroup.players[index].email,
+                                    );
+                                  },
+                                  child: Text(
+                                    'Yes',
+                                    style: TextStyle(
+                                      color: Theme.of(context).errorColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

@@ -1,12 +1,13 @@
-import 'package:app/providers/playgroup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import './screens/edit_player.dart';
 import './screens/home.dart';
 import './screens/login.dart';
 import './screens/register.dart';
 import './screens/splash.dart';
 
+import './providers/playgroup.dart';
 import './providers/user.dart';
 
 void main() {
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
             HomeScreen.routeName: (ctx) => HomeScreen(),
             LoginScreen.routeName: (ctx) => LoginScreen(),
             RegisterScreen.routeName: (ctx) => RegisterScreen(),
+            EditPlayer.routeName: (ctx) => EditPlayer(),
           },
         ),
       ),

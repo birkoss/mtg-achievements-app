@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../screens/achievements.dart';
+import '../screens/edit_player.dart';
 import '../screens/players.dart';
 
 import '../widgets/main_drawer.dart';
@@ -27,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_selectedPageIndex == 0) {
       // ... Achievements
     } else {
-      // ... Player
+      Navigator.of(context).pushNamed(EditPlayer.routeName);
     }
   }
 

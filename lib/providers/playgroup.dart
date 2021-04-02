@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/achievement.dart';
+import '../models/http_exception.dart';
 import '../models/player.dart';
 
 class PlaygroupProvider with ChangeNotifier {
@@ -29,15 +30,22 @@ class PlaygroupProvider with ChangeNotifier {
       final response = await http.post(
         url,
         headers: {
+          'content-type': 'application/json',
           'Authorization': 'token $userToken',
         },
         body: json.encode({
           'email': email,
-          'role': 'role',
+          'role': role,
         }),
       );
 
-      print(response.body);
+      final responseData = json.decode(response.body);
+      if (responseData['error'] != null) {
+        throw HttpException(responseData['error']);
+      }
+
+      _players.add(Player(responseData['playerId'], email, role));
+      notifyListeners();
     } catch (error) {
       print(error);
       throw error;
@@ -57,6 +65,7 @@ class PlaygroupProvider with ChangeNotifier {
       List<Player> newPlayers = dataPlayers
           .map(
             (player) => Player(
+              player['player']['id'],
               player['player']['email'],
               player['player_role']['name'],
             ),

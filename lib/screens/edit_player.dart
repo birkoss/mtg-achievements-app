@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../providers/playgroup.dart';
 
+import '../models/http_exception.dart';
+
 class EditPlayer extends StatefulWidget {
   static const routeName = '/edit-product';
 
@@ -15,17 +17,56 @@ class _EditPlayerState extends State<EditPlayer> {
 
   Map<String, String> _formValues = {
     'email': '',
-    'role': 'normal',
+    'role': 'player',
   };
 
-  void _submitForm() {
+  void _showErrorDialog(
+      [String errorMessage = 'Something went wrong. Please try again.']) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('An Error Occured!'),
+        content: Text(errorMessage),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _submitForm() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
-      Provider.of<PlaygroupProvider>(
-        context,
-        listen: false,
-      ).addPlayer(_formValues['email'], _formValues['role']);
+      try {
+        await Provider.of<PlaygroupProvider>(
+          context,
+          listen: false,
+        ).addPlayer(_formValues['email'], _formValues['role']);
+
+        Navigator.of(context).pop();
+      } on HttpException catch (error) {
+        switch (error.toString()) {
+          case 'invalid_email':
+            _showErrorDialog(
+              'Invalid email! Please verify this is a valid email address!',
+            );
+            break;
+          case 'already_in_playgroup':
+            _showErrorDialog('This email is already in your playgroup!');
+            break;
+          default:
+            _showErrorDialog();
+            break;
+        }
+      } catch (error) {
+        _showErrorDialog();
+      }
     }
   }
 
@@ -69,12 +110,12 @@ class _EditPlayerState extends State<EditPlayer> {
               Text('User Role', style: Theme.of(context).textTheme.headline6),
               SizedBox(height: 20),
               ListTile(
-                title: const Text('Normal'),
+                title: const Text('Player'),
                 subtitle: const Text(
                   'Allow the player to follow his current achievements',
                 ),
                 leading: Radio<String>(
-                  value: 'normal',
+                  value: 'player',
                   groupValue: _formValues['role'],
                   onChanged: (String value) {
                     setState(() {

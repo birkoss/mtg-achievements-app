@@ -1,3 +1,4 @@
+import 'package:app/providers/playgroup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,14 +20,21 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (ctx) => UserProvider(),
-        )
+        ),
+        ChangeNotifierProxyProvider<UserProvider, PlaygroupProvider>(
+          create: null,
+          update: (ctx, user, previousPlaygroupProvider) => PlaygroupProvider(
+            user.token,
+            user.playgroupId,
+          ),
+        ),
       ],
       child: Consumer<UserProvider>(
         builder: (context, user, _) => MaterialApp(
           title: 'MTG Achievements',
           theme: ThemeData(
             primarySwatch: Colors.green,
-            accentColor: Colors.red,
+            accentColor: Colors.amber,
             textTheme: TextTheme(
               headline1: TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold),
               bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),

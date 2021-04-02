@@ -23,6 +23,14 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _addNew() {
+    if (_selectedPageIndex == 0) {
+      // ... Achievements
+    } else {
+      // ... Player
+    }
+  }
+
   @override
   void initState() {
     setState(() {
@@ -47,6 +55,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_pages[_selectedPageIndex]['title']),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: _addNew,
+          ),
+        ],
       ),
       drawer: MainDrawer(),
       body: _pages[_selectedPageIndex]['page'],

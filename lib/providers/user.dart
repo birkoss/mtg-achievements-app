@@ -8,6 +8,7 @@ import '../models/http_exception.dart';
 
 class UserProvider with ChangeNotifier {
   String _token;
+  String _playgroupId;
 
   bool get isLogged {
     return token != null;
@@ -15,6 +16,25 @@ class UserProvider with ChangeNotifier {
 
   String get token {
     return _token;
+  }
+
+  String get playgroupId {
+    return _playgroupId;
+  }
+
+  Future<void> _login(String newToken, String newPlaygroupId) async {
+    _token = newToken;
+    _playgroupId = newPlaygroupId;
+
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(
+        'userData',
+        json.encode({
+          'token': _token,
+          'playgroupId': _playgroupId,
+        }));
+
+    notifyListeners();
   }
 
   Future<void> login(String email, String password) async {
@@ -37,16 +57,7 @@ class UserProvider with ChangeNotifier {
         throw HttpException(responseData['error']);
       }
 
-      _token = responseData['token'];
-
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setString(
-          'userData',
-          json.encode({
-            'token': _token,
-          }));
-
-      notifyListeners();
+      _login(responseData['token'], responseData['playgroupId']);
     } catch (error) {
       throw error;
     }
@@ -79,16 +90,7 @@ class UserProvider with ChangeNotifier {
         throw HttpException(responseData['error']);
       }
 
-      _token = responseData['token'];
-
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setString(
-          'userData',
-          json.encode({
-            'token': _token,
-          }));
-
-      notifyListeners();
+      _login(responseData['token'], responseData['playgroupId']);
     } catch (error) {
       throw error;
     }
@@ -108,6 +110,9 @@ class UserProvider with ChangeNotifier {
     }
 
     _token = userData['token'];
+    if (userData['playgroupId'] != null) {
+      _playgroupId = userData['playgroupId'];
+    }
     notifyListeners();
 
     print("tryAutoLogin: true");

@@ -5,7 +5,7 @@ class PlayersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: CircularProgressIndicator(),
+        child: Text('Players'),
       ),
     );
   }

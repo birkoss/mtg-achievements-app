@@ -57,7 +57,7 @@ class UserProvider with ChangeNotifier {
         throw HttpException(responseData['error']);
       }
 
-      _login(responseData['token'], responseData['playgroupId']);
+      await _login(responseData['token'], responseData['playgroupId']);
     } catch (error) {
       throw error;
     }
@@ -90,7 +90,7 @@ class UserProvider with ChangeNotifier {
         throw HttpException(responseData['error']);
       }
 
-      _login(responseData['token'], responseData['playgroupId']);
+      await _login(responseData['token'], responseData['playgroupId']);
     } catch (error) {
       throw error;
     }

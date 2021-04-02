@@ -1,10 +1,11 @@
-import 'package:app/models/http_exception.dart';
-import 'package:app/providers/user.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../screens/register.dart';
+
+import '../models/http_exception.dart';
+
+import '../providers/user.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = '/login';
@@ -40,8 +41,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _formSubmitted() async {
-    print("SUBMITTED");
-
     if (!_formKey.currentState.validate()) {
       return;
     }

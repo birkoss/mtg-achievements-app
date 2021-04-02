@@ -19,19 +19,16 @@ class UserProvider with ChangeNotifier {
 
   Future<void> login(String email, String password) async {
     final url = Uri.http('localhost:8000', '/v1/login');
-    print(url);
     try {
       final response = await http.post(
         url,
         headers: {
           'content-type': 'application/json',
         },
-        body: json.encode(
-          {
-            'email': email,
-            'password': password,
-          },
-        ),
+        body: json.encode({
+          'email': email,
+          'password': password,
+        }),
       );
 
       final responseData = json.decode(response.body);
@@ -40,11 +37,7 @@ class UserProvider with ChangeNotifier {
         throw HttpException(responseData['error']);
       }
 
-      print(responseData);
-      // http://localhost:8000/v1/login
-
       _token = responseData['token'];
-      notifyListeners();
 
       final prefs = await SharedPreferences.getInstance();
       prefs.setString(
@@ -52,13 +45,11 @@ class UserProvider with ChangeNotifier {
           json.encode({
             'token': _token,
           }));
+
+      notifyListeners();
     } catch (error) {
       throw error;
     }
-  }
-
-  Future<void> register(String email, String password) async {
-    // @TODO: Register
   }
 
   Future<void> logout() async {
@@ -69,9 +60,41 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> tryAutoLogin() async {
-    print('tryAutoLogin');
+  Future<void> register(String email, String password) async {
+    final url = Uri.http('localhost:8000', '/v1/register');
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: json.encode({
+          'email': email,
+          'password': password,
+        }),
+      );
 
+      final responseData = json.decode(response.body);
+      if (responseData['error'] != null) {
+        throw HttpException(responseData['error']);
+      }
+
+      _token = responseData['token'];
+
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString(
+          'userData',
+          json.encode({
+            'token': _token,
+          }));
+
+      notifyListeners();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  Future<bool> tryAutoLogin() async {
     var prefs = await SharedPreferences.getInstance();
 
     if (!prefs.containsKey('userData')) {
@@ -80,9 +103,14 @@ class UserProvider with ChangeNotifier {
 
     var userData =
         json.decode(prefs.getString('userData')) as Map<String, Object>;
+    if (userData['token'] == null) {
+      return false;
+    }
 
     _token = userData['token'];
     notifyListeners();
+
+    print("tryAutoLogin: true");
 
     return true;
   }

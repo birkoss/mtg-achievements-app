@@ -15,6 +15,7 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print("MyApp.build");
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -36,9 +37,11 @@ class MyApp extends StatelessWidget {
               : FutureBuilder(
                   future: user.tryAutoLogin(),
                   builder: (ctx, snapshot) {
+                    print("FutureBuilder.builder...");
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return SplashScreen();
                     } else {
+                      print("icitte?");
                       return LoginScreen();
                     }
                   }),

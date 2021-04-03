@@ -56,6 +56,13 @@ class UserProvider with ChangeNotifier {
               ))
           .toList();
 
+      // Assure the _playgroupId is within the current playgroups
+      try {
+        _playgroups.firstWhere((p) => p.id == _playgroupId);
+      } catch (error) {
+        _playgroupId = _playgroups.length > 0 ? _playgroups[0].id : null;
+      }
+
       notifyListeners();
     } catch (error) {
       await logout();

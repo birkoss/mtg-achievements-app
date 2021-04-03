@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import './screens/edit_achievement.dart';
 import './screens/edit_player.dart';
 import './screens/home.dart';
 import './screens/login.dart';
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
             LoginScreen.routeName: (ctx) => LoginScreen(),
             RegisterScreen.routeName: (ctx) => RegisterScreen(),
             EditPlayer.routeName: (ctx) => EditPlayer(),
+            EditAchievement.routeName: (ctx) => EditAchievement(),
           },
         ),
       ),

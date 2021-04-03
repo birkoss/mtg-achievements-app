@@ -41,6 +41,43 @@ class PlaygroupProvider with ChangeNotifier {
     return _playgroups;
   }
 
+  Future<void> addAchievement(
+      String name, int points, String description) async {
+    final url = Uri.http('localhost:8000', 'v1/playgroup/$id/achievements');
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'content-type': 'application/json',
+          'Authorization': 'token $userToken',
+        },
+        body: json.encode({
+          'name': name,
+          'points': points,
+          'description': description,
+        }),
+      );
+
+      final responseData = json.decode(response.body);
+      if (responseData['error'] != null) {
+        throw HttpException(responseData['error']);
+      }
+
+      _achievements.add(
+        Achievement(
+          id: responseData['playerId'],
+          name: name,
+          description: description,
+          points: points,
+        ),
+      );
+      notifyListeners();
+    } catch (error) {
+      print(error);
+      throw error;
+    }
+  }
+
   Future<void> addPlayer(String email, String role) async {
     final url = Uri.http('localhost:8000', 'v1/playgroup/$id/players');
     try {
@@ -71,7 +108,7 @@ class PlaygroupProvider with ChangeNotifier {
 
   Future<void> fetch() async {
     print("PlaygroupProvider.fetch()");
-    final url = Uri.http('localhost:8000', 'v1/playgroup/$id/players');
+    var url = Uri.http('localhost:8000', 'v1/playgroup/$id/players');
 
     try {
       final responsePlayers = await http.get(url, headers: {
@@ -90,6 +127,28 @@ class PlaygroupProvider with ChangeNotifier {
           .toList();
 
       _players = newPlayers;
+
+      url = Uri.http('localhost:8000', 'v1/playgroup/$id/achievements');
+
+      final responseAchievements = await http.get(url, headers: {
+        'Authorization': 'token $userToken',
+      });
+
+      final dataAchievements =
+          json.decode(responseAchievements.body)['achievements'] as List;
+
+      List<Achievement> newAchievements = dataAchievements
+          .map(
+            (achievement) => Achievement(
+              id: achievement['achievementId'],
+              name: achievement['name'],
+              points: achievement['points'],
+              description: achievement['description'],
+            ),
+          )
+          .toList();
+
+      _achievements = newAchievements;
 
       notifyListeners();
     } catch (error) {

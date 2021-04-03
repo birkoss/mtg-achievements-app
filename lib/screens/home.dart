@@ -1,12 +1,14 @@
-import 'package:app/providers/user.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../screens/achievements.dart';
+import '../screens/edit_achievement.dart';
 import '../screens/edit_player.dart';
 import '../screens/players.dart';
 
 import '../widgets/main_drawer.dart';
+
+import '../providers/user.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home';
@@ -28,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _addNew() {
     if (_selectedPageIndex == 0) {
-      // ... Achievements
+      Navigator.of(context).pushNamed(EditAchievement.routeName);
     } else {
       Navigator.of(context).pushNamed(EditPlayer.routeName);
     }

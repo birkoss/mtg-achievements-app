@@ -20,7 +20,12 @@ class AchievementsScreen extends StatelessWidget {
             return Loading();
           } else {
             return Consumer<PlaygroupProvider>(
-              builder: (ctx, playgroup, _) => Text(playgroup.id),
+              builder: (ctx, playgroup, _) => ListView.builder(
+                itemCount: playgroup.achievements.length,
+                itemBuilder: (ctx, index) => ListTile(
+                  title: Text(playgroup.achievements[index].name),
+                ),
+              ),
             );
           }
         },

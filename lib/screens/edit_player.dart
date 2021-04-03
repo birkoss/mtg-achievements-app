@@ -13,7 +13,7 @@ class EditPlayer extends StatefulWidget {
 }
 
 class _EditPlayerState extends State<EditPlayer> {
-  String _playerId = null;
+  String _playerId;
 
   GlobalKey<FormState> _formKey = GlobalKey();
 

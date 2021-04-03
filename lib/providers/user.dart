@@ -29,7 +29,7 @@ class UserProvider with ChangeNotifier {
     return [..._playgroups];
   }
 
-  Future<void> fetchPlaygroups() async {
+  Future<void> _fetchPlaygroups() async {
     final url = Uri.http('localhost:8000', '/v1/playgroups');
     try {
       final response = await http.get(
@@ -55,8 +55,10 @@ class UserProvider with ChangeNotifier {
                 playgroup['role'],
               ))
           .toList();
+
+      notifyListeners();
     } catch (error) {
-      throw error;
+      await logout();
     }
   }
 
@@ -72,7 +74,7 @@ class UserProvider with ChangeNotifier {
           'playgroupId': _playgroupId,
         }));
 
-    notifyListeners();
+    await _fetchPlaygroups();
   }
 
   Future<void> login(String email, String password) async {
@@ -156,15 +158,7 @@ class UserProvider with ChangeNotifier {
 
     print("tryAutoLogin: true");
 
-    try {
-      await fetchPlaygroups();
-
-      notifyListeners();
-    } catch (error) {
-      print(error);
-      print("logout");
-      await logout();
-    }
+    await _fetchPlaygroups();
 
     return true;
   }

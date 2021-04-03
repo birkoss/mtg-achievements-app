@@ -5,13 +5,16 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/http_exception.dart';
+import '../models/playgroup.dart';
 
 class UserProvider with ChangeNotifier {
   String _token;
   String _playgroupId;
 
+  List<Playgroup> _playgroups = [];
+
   bool get isLogged {
-    return token != null;
+    return token != null && playgroups.length > 0;
   }
 
   String get token {
@@ -20,6 +23,41 @@ class UserProvider with ChangeNotifier {
 
   String get playgroupId {
     return _playgroupId;
+  }
+
+  List<Playgroup> get playgroups {
+    return [..._playgroups];
+  }
+
+  Future<void> fetchPlaygroups() async {
+    final url = Uri.http('localhost:8000', '/v1/playgroups');
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'content-type': 'application/json',
+          'Authorization': 'token $token',
+        },
+      );
+
+      final responseData = json.decode(response.body);
+
+      if (responseData['error'] != null) {
+        throw HttpException(responseData['error']);
+      }
+
+      final responsePlaygroups = responseData['playgroups'] as List;
+
+      _playgroups = responsePlaygroups
+          .map((playgroup) => Playgroup(
+                playgroup['id'],
+                playgroup['name'],
+                playgroup['role'],
+              ))
+          .toList();
+    } catch (error) {
+      throw error;
+    }
   }
 
   Future<void> _login(String newToken, String newPlaygroupId) async {
@@ -97,6 +135,8 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<bool> tryAutoLogin() async {
+    print("tryAutoLogin()");
+
     var prefs = await SharedPreferences.getInstance();
 
     if (!prefs.containsKey('userData')) {
@@ -113,9 +153,18 @@ class UserProvider with ChangeNotifier {
     if (userData['playgroupId'] != null) {
       _playgroupId = userData['playgroupId'];
     }
-    notifyListeners();
 
     print("tryAutoLogin: true");
+
+    try {
+      await fetchPlaygroups();
+
+      notifyListeners();
+    } catch (error) {
+      print(error);
+      print("logout");
+      await logout();
+    }
 
     return true;
   }

@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import '../models/achievement.dart';
 import '../models/http_exception.dart';
 import '../models/player.dart';
+import '../models/playgroup.dart';
 
 class PlaygroupProvider with ChangeNotifier {
   final String id;
@@ -13,15 +14,20 @@ class PlaygroupProvider with ChangeNotifier {
 
   PlaygroupProvider(this.userToken, this.id);
 
-  List<Player> _players = [];
   List<Achievement> _achievements = [];
+  List<Playgroup> _playgroups = [];
+  List<Player> _players = [];
+
+  List<Achievement> get achievements {
+    return _achievements;
+  }
 
   List<Player> get players {
     return _players;
   }
 
-  List<Achievement> get achievements {
-    return _achievements;
+  List<Playgroup> get playgroups {
+    return _playgroups;
   }
 
   Future<void> addPlayer(String email, String role) async {

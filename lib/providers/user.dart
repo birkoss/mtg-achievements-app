@@ -84,6 +84,13 @@ class UserProvider with ChangeNotifier {
     await _fetchPlaygroups();
   }
 
+  Future<void> changePlaygroup(String playgroupId) async {
+    if (playgroups.any((playgroup) => playgroup.id == playgroupId)) {
+      _playgroupId = playgroupId;
+      notifyListeners();
+    }
+  }
+
   Future<void> login(String email, String password) async {
     final url = Uri.http('localhost:8000', '/v1/login');
     try {
@@ -163,7 +170,7 @@ class UserProvider with ChangeNotifier {
       _playgroupId = userData['playgroupId'];
     }
 
-    print("tryAutoLogin: true");
+    print("tryAutoLogin() -> true");
 
     await _fetchPlaygroups();
 

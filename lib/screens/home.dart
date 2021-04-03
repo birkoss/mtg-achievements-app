@@ -1,4 +1,6 @@
+import 'package:app/providers/user.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../screens/achievements.dart';
 import '../screens/edit_player.dart';
@@ -53,10 +55,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var user = Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(_pages[_selectedPageIndex]['title']),
         actions: [
+          if (user.playgroups.length > 1)
+            PopupMenuButton(
+              onSelected: (String selectedValue) {
+                user.changePlaygroup(selectedValue);
+              },
+              icon: Icon(Icons.more_vert),
+              itemBuilder: (ctx) => user.playgroups
+                  .map((playgroup) => PopupMenuItem(
+                        child: ListTile(
+                          leading: user.playgroupId == playgroup.id
+                              ? Icon(Icons.check)
+                              : Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                ),
+                          title: Text(playgroup.name),
+                        ),
+                        value: playgroup.id,
+                      ))
+                  .toList(),
+            ),
           IconButton(
             icon: Icon(Icons.add),
             onPressed: _addNew,

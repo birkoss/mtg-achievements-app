@@ -1,6 +1,9 @@
-import 'package:app/providers/user.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../screens/home.dart';
+
+import '../providers/user.dart';
 
 class MainDrawer extends StatelessWidget {
   @override
@@ -13,8 +16,16 @@ class MainDrawer extends StatelessWidget {
             automaticallyImplyLeading: false,
           ),
           ListTile(
-            leading: Icon(Icons.logout),
-            title: Text('Logout'),
+            leading: const Icon(Icons.home),
+            title: const Text('Home'),
+            onTap: () {
+              Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout'),
             onTap: () {
               Provider.of<UserProvider>(context, listen: false).logout();
             },

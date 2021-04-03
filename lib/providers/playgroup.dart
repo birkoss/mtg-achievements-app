@@ -9,10 +9,21 @@ import '../models/player.dart';
 import '../models/playgroup.dart';
 
 class PlaygroupProvider with ChangeNotifier {
-  final String id;
-  final String userToken;
+  // final String id;
+  // final String userToken;
 
-  PlaygroupProvider(this.userToken, this.id);
+  // PlaygroupProvider(this.userToken, this.id);
+  String id;
+  String userToken;
+
+  PlaygroupProvider(String ut, String i) {
+    print("PlaygroupProvider()");
+    userToken = ut;
+    id = i;
+    if (userToken != null) {
+      fetch();
+    }
+  }
 
   List<Achievement> _achievements = [];
   List<Playgroup> _playgroups = [];
@@ -59,7 +70,7 @@ class PlaygroupProvider with ChangeNotifier {
   }
 
   Future<void> fetch() async {
-    print("playgroup provider . fetch()");
+    print("PlaygroupProvider.fetch()");
     final url = Uri.http('localhost:8000', 'v1/playgroup/$id/players');
 
     try {
